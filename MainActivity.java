@@ -1,5 +1,6 @@
-package com.example.julie.rescueemergency;
+package com.example.julie.rescues;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
@@ -19,12 +20,15 @@ public class MainActivity extends AppCompatActivity implements  AdapterView.OnIt
 EditText name,pass;
 Button ok;
 String nm , ps;
-Spinner sp;
 String item;
 public  String type;
 List list;
+    Spinner spinner;
+    public static  String user;
+    public static  String utype;
 public  static  MainActivity Me;
 ArrayAdapter<String> dataAdapter;
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -35,10 +39,9 @@ ArrayAdapter<String> dataAdapter;
 /*list = [];*/
         name = findViewById(R.id.name);
         pass = findViewById(R.id.passwrd);
-        ok = findViewById(R.id.ok);
-        nm = name.getText().toString();
-        ps = pass.getText().toString();
-     sp = (Spinner) findViewById(R.id.spinner);
+        ok = findViewById(R.id.btnok);
+
+    spinner = (Spinner) findViewById(R.id.sp1);
         List<String> categories = new ArrayList<String>();
         categories.add("-----Select-------");
         categories.add("user");
@@ -54,17 +57,23 @@ ArrayAdapter<String> dataAdapter;
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // attaching data adapter to spinner
-        sp.setAdapter(dataAdapter);
+        spinner.setAdapter(dataAdapter);
      /*  sp.setOnItemSelectedListener(this);
-       loadSpinnerData();
+       loadSpinnerData();*/
 
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                   // Toast toast=Toast.makeText(getApplicationContext(),"sucessfully Registered",Toast.LENGTH_SHORT);
+                   // toast.show();
+                //    Intent intent = new Intent(MainActivity.this,userHomepage.class);
+                   // startActivity(intent);
+                   StartForm.username=name.getText().toString();
+                    utype=spinner.getSelectedItem().toString();
+                    NetworkTask.SendData("ADU"+name.getText().toString()+"<"+pass.getText().toString()+"<"+spinner.getSelectedItem().toString());
 
                 }
-            });*/
+            });
     }
 
     @Override
@@ -80,6 +89,30 @@ ArrayAdapter<String> dataAdapter;
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+    public static void NextForm()
+    {
+
+        if(utype.compareTo("user")==0)
+        {
+            Intent in = new Intent(Me.getApplicationContext(), userreg.class);
+            Me.startActivity(in);
+        }
+        else  if(utype.compareTo("Police Station")==0)
+        {
+           // Intent in = new Intent(Me.getApplicationContext(), PoliceStationReg.class);
+          //  Me.startActivity(in);
+        }
+        else  if(utype.compareTo("Hospital")==0)
+        {
+          //  Intent in = new Intent(Me.getApplicationContext(), HospitalRegistration.class);
+          //  Me.startActivity(in);
+        }
+        else  if(utype.compareTo("Workshop")==0)
+        {
+          //  Intent in = new Intent(Me.getApplicationContext(), WorkshopRegistration.class);
+          //  Me.startActivity(in);
+        }
     }
     private void loadSpinnerData() {
         // database handler

@@ -1,4 +1,4 @@
-package com.example.julie.rescueemergency;
+package com.example.julie.rescues;
 
 
 
@@ -10,6 +10,7 @@ package com.example.julie.rescueemergency;
 
         import android.content.Intent;
         import android.os.AsyncTask;
+        import android.telephony.SmsManager;
         import android.util.Log;
         import android.widget.Toast;
 
@@ -20,6 +21,7 @@ public class NetworkTask extends AsyncTask<Void, Void, Void> {
 public int Mode;
 public static String utype;
 public String response;
+public String error="";
     NetworkTask(int m){
    Mode=m;
     }
@@ -38,17 +40,35 @@ public String response;
                     ps=new PrintStream(so.getOutputStream());
                     din=new DataInputStream(so.getInputStream());
 response="";
+                    Log.d("Error", "Connected");
                 }catch(Exception ee)
                 {
+                    error=ee.toString();
                     Log.d("Error", ee.toString());
 
                 }
             }
             else
             {
+                while(true) {
+                    if (Timers.Me != null && Timers.IsEnable && din.available() <= 0) {
+                        try {
+                            Thread.sleep(1000);
+                        }catch(Exception ee)
+                        {
 
-                response=din.readLine();;
-                Log.d("Error","Here"+response);
+                        }
+                        response = null;
+                        break;
+                    }
+                    if(din.available()>0) {
+                        response = din.readLine();
+
+                        break;
+                    }
+                }
+
+
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -69,29 +89,75 @@ public static void SendData(String sg)
         super.onPostExecute(result);
         try{
         try{
-            if(response.startsWith("REGS"))
+            if(error!=null)
             {
-//                Intent in=new Intent(MainActivity.Me.getApplicationContext(),LoginForm.class);
-//                StartForm.me.startActivity(in);
+              //  Toast.makeText(StartForm.me.getApplicationContext(), error, Toast.LENGTH_LONG).show();
+                //error=null;
             }
-            else if(response.startsWith("REGF"))
-            {
-                Toast.makeText(MainActivity.Me.getApplicationContext(), "Unable to connect", Toast.LENGTH_LONG).show();
-            }
-           else if(response.startsWith("LOGS"))
-            {
-                utype=response.substring(4);
-                if(utype.compareTo("user")==0) {
-                    Intent in = new Intent(StartForm.me.getApplicationContext(), welcome.class);
-                    StartForm.me.startActivity(in);
+            if(response!=null) {
+
+                if(response.startsWith("MOB"))
+                {
+                    Log.d("Erro1",response);
+                    response=response.substring(3);
+                    int k=response.indexOf("<");
+                    try {
+
+                      userHomepage.Me.SendSMS(response.substring(0, k),  response.substring(k + 1));
+                    }catch(Exception ee)
+                    {
+                        Log.d("Erro1",ee.toString());
+                    }
                 }
-            }
-            else if(response.startsWith("LOGF"))
+                else if(response.startsWith("WORK"))
+                {
+                    response=response.substring(4);
+                    String[] p=response.split("<");
+                    AddCategory.g=p;
+                    Intent in = new Intent(userHomepage.Me.getApplicationContext(), AddCategory.class);
+                    userHomepage.Me.startActivity(in);
+                }
+                else if(response.startsWith("SHOS"))
+                {
+                    response=response.substring(4);
+                    String[] p=response.split("<");
+                    AddCategory.g=p;
+                    Intent in = new Intent(userHomepage.Me.getApplicationContext(), AddCategory.class);
+                    userHomepage.Me.startActivity(in);
+                }
+                else if(response.startsWith("POLI"))
+                {
+                    response=response.substring(4);
+                    String[] p=response.split("<");
+                    AddCategory.g=p;
+                    Intent in = new Intent(userHomepage.Me.getApplicationContext(), AddCategory.class);
+                    userHomepage.Me.startActivity(in);
+                }
+               else if (response.startsWith("ADUS")) {
+                    MainActivity.NextForm();
+                } else if (response.startsWith("ADUF")) {
+                    Toast.makeText(MainActivity.Me.getApplicationContext(), "User Exist", Toast.LENGTH_LONG).show();
+                } else if (response.startsWith("LOGS")) {
+                    utype = response.substring(4);
+                    StartForm.NextForm(utype);
+
+
+                }
+        /*    else if(response.startsWith("PREGS"))
             {
-                Toast.makeText(StartForm.me.getApplicationContext(), "Invalid UserID/Password", Toast.LENGTH_LONG).show();
+                Toast.makeText(PoliceStationReg.Me.getApplicationContext(), "Registartion Completed", Toast.LENGTH_LONG).show();
+
+            }*/
+                else if (response.startsWith("LOGF")) {
+                    Toast.makeText(StartForm.me.getApplicationContext(), "Invalid UserID/Password", Toast.LENGTH_LONG).show();
+                }
+
             }
+            if(Timers.Me!=null&&Timers.IsEnable)
+            {
+                Timers.Me.NextRun();
 
-
+            }
 
 
                 }catch(Exception ee){ ee.printStackTrace(); }
