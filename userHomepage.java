@@ -1,5 +1,6 @@
-package com.example.julie.rescueemergency;
+package com.example.julie.rescues;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,14 +11,17 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +37,8 @@ public class userHomepage extends AppCompatActivity implements SensorListener ,L
     public static  String place;
     public static  String Loca;
     LocationManager locationManager;
+    Button bt2;
+    public EditText edit;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,28 +49,37 @@ public class userHomepage extends AppCompatActivity implements SensorListener ,L
         sensorMgr.registerListener(this,
                 SensorManager.SENSOR_ACCELEROMETER,
                 SensorManager.SENSOR_DELAY_GAME);
+        edit=(EditText)findViewById(R.id.editText);
+
         Button bt1 = (Button) findViewById(R.id.btnhospital);
-        Button bt2 = (Button) findViewById(R.id.btnworkshop);
+
+       bt2 = (Button) findViewById(R.id.btnworkshop);
+
+       Button b5=(Button)findViewById(R.id.button5) ;
+       b5.setOnClickListener(new View.OnClickListener(){
+           public void onClick(View view) {
+
+              getLocation();
+           }
+       });
         Button bt3 = (Button) findViewById(R.id.btnpolice);
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent int1 = new Intent(userHomepage.this, HospitalHomepage.class);
-                startActivity(int1);
+
+                NetworkTask.SendData("SHOS"+edit.getText().toString());
             }
         });
         bt2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent int2 = new Intent(userHomepage.this, workshopHomepage.class);
-                startActivity(int2);
+           NetworkTask.SendData("WORK"+edit.getText().toString());
             }
         });
         bt3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent int3 = new Intent(userHomepage.this, policestationHomepage.class);
-                startActivity(int3);
+                NetworkTask.SendData("POLI"+edit.getText().toString());
             }
         });
     }
@@ -132,6 +147,13 @@ public class userHomepage extends AppCompatActivity implements SensorListener ,L
             }
         });
     }
+    public String tos,Sub;
+    public void SendSMS(String to,String msg)
+    {
+        tos=to;
+        Sub=msg;
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.SEND_SMS},2);
+    }
     public void ShowAlert1()
     {
         runOnUiThread(new Runnable() {
@@ -169,7 +191,7 @@ public void SendRequest()
 
     Intent int2=new Intent(userHomepage.this,userHomepage.class);
     startActivity(int2);
-    NetworkTask.SendData("ACC"+place);
+    NetworkTask.SendData("ACC"+edit.getText().toString());
     Toast.makeText(Me.getApplicationContext(), "Sending Request", Toast.LENGTH_LONG).show();
 }
     public void CloseDialog()
@@ -181,7 +203,9 @@ public void SendRequest()
     }
 
     public void onLocationChanged(Location location) {
-        place=("Current Location: " + location.getLatitude() + ", " + location.getLongitude());
+        place= location.getLatitude() + ", " + location.getLongitude();
+     edit.setText(place);
+     //   Toast.makeText(userHomepage.this, place, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -196,13 +220,42 @@ public void SendRequest()
 
     }
 
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                try{
+                    locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
+                }
+                catch(SecurityException e) {
+                    bt2.setText(e.toString());
+                    Log.d("Error1",e.toString());
+                   // tv.setText(e.toString());
+                }
+                return;
+            }
+            case 2: {
+                try {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(tos, null,Sub, null, null);
+                }catch(Exception ee)
+                {
+                    Log.d("Erro1",ee.toString());
+                }
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
     void getLocation() {
         try {
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
         }
         catch(SecurityException e) {
-            e.printStackTrace();
+            bt2.setText(e.toString());
+            Log.d("Error1",e.toString());
         }
     }
 

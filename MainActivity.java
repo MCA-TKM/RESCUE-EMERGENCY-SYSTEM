@@ -1,4 +1,4 @@
-package com.example.julie.rescueemergency;
+package com.example.julie.rescues;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -100,18 +100,18 @@ ArrayAdapter<String> dataAdapter;
         }
         else  if(utype.compareTo("Police Station")==0)
         {
-            Intent in = new Intent(Me.getApplicationContext(), PoliceStationReg.class);
-            Me.startActivity(in);
+           // Intent in = new Intent(Me.getApplicationContext(), PoliceStationReg.class);
+          //  Me.startActivity(in);
         }
         else  if(utype.compareTo("Hospital")==0)
         {
-            Intent in = new Intent(Me.getApplicationContext(), HospitalRegistration.class);
-            Me.startActivity(in);
+          //  Intent in = new Intent(Me.getApplicationContext(), HospitalRegistration.class);
+          //  Me.startActivity(in);
         }
         else  if(utype.compareTo("Workshop")==0)
         {
-            Intent in = new Intent(Me.getApplicationContext(), WorkshopRegistration.class);
-            Me.startActivity(in);
+          //  Intent in = new Intent(Me.getApplicationContext(), WorkshopRegistration.class);
+          //  Me.startActivity(in);
         }
     }
     private void loadSpinnerData() {

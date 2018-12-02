@@ -1,4 +1,4 @@
-package com.example.julie.rescueemergency;
+package com.example.julie.rescues;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -65,18 +65,18 @@ public static  String username;
         }
         else  if(utype.compareTo("Police Station")==0)
         {
-            Intent in = new Intent(me.getApplicationContext(), policestationHomepage.class);
-            me.startActivity(in);
+           // Intent in = new Intent(me.getApplicationContext(), policestationHomepage.class);
+          //  me.startActivity(in);
         }
         else  if(utype.compareTo("Hospital")==0)
         {
-            Intent in = new Intent(me.getApplicationContext(), HospitalHomepage.class);
-            me.startActivity(in);
+          //  Intent in = new Intent(me.getApplicationContext(), HospitalHomepage.class);
+          //  me.startActivity(in);
         }
         else  if(utype.compareTo("Workshop")==0)
         {
-            Intent in = new Intent(me.getApplicationContext(), workshopHomepage.class);
-            me.startActivity(in);
+          //  Intent in = new Intent(me.getApplicationContext(), workshopHomepage.class);
+         //   me.startActivity(in);
         }
     }
 }

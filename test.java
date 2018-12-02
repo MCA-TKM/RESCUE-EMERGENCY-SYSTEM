@@ -1,4 +1,6 @@
-package com.example.julie.rescueemergency;
+package com.example.julie.rescues;
+import android.Manifest;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.content.Context;
 
@@ -35,7 +37,7 @@ TextView tv;
      bu.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View view) {
-
+getLocation();
          }
      });
         getLocation();
@@ -62,14 +64,30 @@ TextView tv;
     public void onStatusChanged(String provider, int status, Bundle extras) {
 
     }
-
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                try{
+                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+               locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
+                }
+                catch(SecurityException e) {
+                    tv.setText(e.toString());
+                }
+                return;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
     void getLocation() {
         try {
-    locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+    //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+   // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
         }
         catch(SecurityException e) {
-            e.printStackTrace();
+           tv.setText(e.toString());
         }
     }
     }

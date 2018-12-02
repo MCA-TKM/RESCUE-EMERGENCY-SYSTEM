@@ -1,4 +1,4 @@
-package com.example.julie.rescueemergency;
+package com.example.julie.rescues;
 
 
 
@@ -63,6 +63,7 @@ response="";
                     }
                     if(din.available()>0) {
                         response = din.readLine();
+
                         break;
                     }
                 }
@@ -94,14 +95,45 @@ public static void SendData(String sg)
                 //error=null;
             }
             if(response!=null) {
+
                 if(response.startsWith("MOB"))
                 {
-                    response=response.substring((3);
+                    Log.d("Erro1",response);
+                    response=response.substring(3);
                     int k=response.indexOf("<");
-                    SmsManager smsManager = SmsManager.getDefault();
-                    smsManager.sendTextMessage(response.substring(0,k), null, response.substring(k+1), null, null);
+                    try {
+
+                      userHomepage.Me.SendSMS(response.substring(0, k),  response.substring(k + 1));
+                    }catch(Exception ee)
+                    {
+                        Log.d("Erro1",ee.toString());
+                    }
                 }
-              else  if (response.startsWith("ADUS")) {
+                else if(response.startsWith("WORK"))
+                {
+                    response=response.substring(4);
+                    String[] p=response.split("<");
+                    AddCategory.g=p;
+                    Intent in = new Intent(userHomepage.Me.getApplicationContext(), AddCategory.class);
+                    userHomepage.Me.startActivity(in);
+                }
+                else if(response.startsWith("SHOS"))
+                {
+                    response=response.substring(4);
+                    String[] p=response.split("<");
+                    AddCategory.g=p;
+                    Intent in = new Intent(userHomepage.Me.getApplicationContext(), AddCategory.class);
+                    userHomepage.Me.startActivity(in);
+                }
+                else if(response.startsWith("POLI"))
+                {
+                    response=response.substring(4);
+                    String[] p=response.split("<");
+                    AddCategory.g=p;
+                    Intent in = new Intent(userHomepage.Me.getApplicationContext(), AddCategory.class);
+                    userHomepage.Me.startActivity(in);
+                }
+               else if (response.startsWith("ADUS")) {
                     MainActivity.NextForm();
                 } else if (response.startsWith("ADUF")) {
                     Toast.makeText(MainActivity.Me.getApplicationContext(), "User Exist", Toast.LENGTH_LONG).show();

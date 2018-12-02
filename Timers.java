@@ -1,4 +1,4 @@
-package com.example.julie.rescueemergency;
+package com.example.julie.rescues;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -36,7 +36,7 @@ public class Timers {
     public void NextRun() {
         try {
 
-            diff = 1;
+
             long lastdiff = diff;
             if (diff > 0) {
                 long ct = new Date().getTime();
@@ -49,9 +49,9 @@ public class Timers {
 
                 //   Thread.sleep(1000);
 
-                if (lastdiff != diff)
-
+                if (lastdiff != diff) {
                     tv.setText("Remaining " + diff);
+                }
 
             }
         } catch (Exception ee) {
@@ -61,6 +61,7 @@ public class Timers {
         if (diff <= 0) {
 
             IsEnable = false;
+            userHomepage.Me.SendRequest();
         }
 
 

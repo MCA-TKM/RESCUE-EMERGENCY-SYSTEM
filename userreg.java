@@ -1,4 +1,4 @@
-package com.example.julie.rescueemergency;
+package com.example.julie.rescues;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
